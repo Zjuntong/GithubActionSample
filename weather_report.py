@@ -1,25 +1,21 @@
-import time
-import requests
-import json
-
-from bs4 import BeautifulSoup
-
-
-# 从测试号信息获取
-appID = "wxaf824accdbfdad5a"
-appSecret = "732ca5c31a4363b0d344013f7b7dd3e7"
-#收信人ID即 用户列表中的微信号，见上文
-openId = "oKaJ26nC7rPHTReZSbXo4cv6OX9E"
-# 天气预报模板ID
-weather_template_id = "bzHc-S8oyAQvMl6MopOiEfsYgs2boMxSokMr7W_BpfE"
-
-
-
+# 安装依赖 pip3 install requests html5lib bs4 schedule
 import os
 import requests
 import json
 from bs4 import BeautifulSoup
 
+# 从测试号信息获取
+appID = os.environ.get("wxaf824accdbfdad5a")
+appSecret = os.environ.get("732ca5c31a4363b0d344013f7b7dd3e7")
+# 收信人ID即 用户列表中的微信号
+openId_str = os.environ.get("oKaJ26nC7rPHTReZSbXo4cv6OX9E", "oKaJ26scwbzDuBC_Cxqftmf-2KPY")
+openId_list = [id.strip() for id in openId_str.split('\n') if id.strip()]
+# 读入地址列表
+location_str = os.environ.get("义乌", "永康")
+Location_list = [loc.strip() for loc in location_str.split('\n') if loc.strip()]
+
+# 天气预报模板ID
+weather_template_id = os.environ.get("bzHc-S8oyAQvMl6MopOiEfsYgs2boMxSokMr7W_BpfE")
 
 def get_weather(my_city):
     urls = ["http://www.weather.com.cn/textFC/hb.shtml",
@@ -87,7 +83,7 @@ def get_daily_love():
     return daily_love
 
 
-def send_weather(access_token, weather):
+def send_weather(access_token, openId, weather):
     # touser 就是 openID
     # template_id 就是模板ID
     # url 就是点击模板跳转的url
@@ -96,7 +92,7 @@ def send_weather(access_token, weather):
     import datetime
     today = datetime.date.today()
     today_str = today.strftime("%Y年%m月%d日")
-
+    
     body = {
         "touser": openId.strip(),
         "template_id": weather_template_id.strip(),
@@ -127,16 +123,21 @@ def send_weather(access_token, weather):
 
 
 
-def weather_report(this_city):
+def weather_report(this_user, this_city):
     # 1.获取access_token
     access_token = get_access_token()
     # 2. 获取天气
     weather = get_weather(this_city)
     print(f"天气信息： {weather}")
+    # 3. 获取用户列表
+    print(f"用户： {this_user}")
     # 3. 发送消息
-    send_weather(access_token, weather)
+    send_weather(access_token, this_user, weather)
 
 
 
 if __name__ == '__main__':
-    weather_report("宁波")
+    print(f"用户列表： {openId_list}")
+    print(f"地点列表： {Location_list}")
+    for _ in range(0,len(openId_list)):
+        weather_report(openId_list[_],Location_list[_])
