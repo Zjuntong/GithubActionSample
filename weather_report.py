@@ -1,21 +1,20 @@
-# 安装依赖 pip3 install requests html5lib bs4 schedule
-import os
+import time
 import requests
 import json
+
 from bs4 import BeautifulSoup
 
-# 从测试号信息获取
-appID = os.environ.get("wxaf824accdbfdad5a")
-appSecret = os.environ.get("732ca5c31a4363b0d344013f7b7dd3e7")
-# 收信人ID即 用户列表中的微信号
-openId_str = os.environ.get("oKaJ26nC7rPHTReZSbXo4cv6OX9E", "oKaJ26scwbzDuBC_Cxqftmf-2KPY")
-openId_list = [id.strip() for id in openId_str.split('\n') if id.strip()]
-# 读入地址列表
-location_str = os.environ.get("义乌市", "永康市")
-Location_list = [loc.strip() for loc in location_str.split('\n') if loc.strip()]
 
+# 从测试号信息获取
+appID = "wxaf824accdbfdad5a"
+appSecret = "732ca5c31a4363b0d344013f7b7dd3e7"
+#收信人ID即 用户列表中的微信号，见上文
+openId = "oKaJ26nC7rPHTReZSbXo4cv6OX9E"
 # 天气预报模板ID
-weather_template_id = os.environ.get("bzHc-S8oyAQvMl6MopOiEfsYgs2boMxSokMr7W_BpfE")
+weather_template_id = "bzHc-S8oyAQvMl6MopOiEfsYgs2boMxSokMr7W_BpfE"
+# 时间表模板ID
+timetable_template_id = "MsUmEQRX1o8dENWw8YHtECy19i7ZaxNw8Sda0p3o6OQ"
+
 
 def get_weather(my_city):
     urls = ["http://www.weather.com.cn/textFC/hb.shtml",
@@ -83,7 +82,7 @@ def get_daily_love():
     return daily_love
 
 
-def send_weather(access_token, openId, weather):
+def send_weather(access_token, weather):
     # touser 就是 openID
     # template_id 就是模板ID
     # url 就是点击模板跳转的url
@@ -92,7 +91,7 @@ def send_weather(access_token, openId, weather):
     import datetime
     today = datetime.date.today()
     today_str = today.strftime("%Y年%m月%d日")
-    
+
     body = {
         "touser": openId.strip(),
         "template_id": weather_template_id.strip(),
@@ -122,22 +121,44 @@ def send_weather(access_token, openId, weather):
     print(requests.post(url, json.dumps(body)).text)
 
 
+def send_timetable(access_token, message):
+    body = {
+        "touser": openId,
+        "template_id": timetable_template_id.strip(),
+        "url": "https://weixin.qq.com",
+        "data": {
+            "message": {
+                "value": message
+            },
+        }
+    }
+    url = 'https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={}'.format(access_token)
+    print(requests.post(url, json.dumps(body)).text)
 
-def weather_report(this_user, this_city):
+
+def weather_report(city):
     # 1.获取access_token
     access_token = get_access_token()
     # 2. 获取天气
-    weather = get_weather(this_city)
+    weather = get_weather(city)
     print(f"天气信息： {weather}")
-    # 3. 获取用户列表
-    print(f"用户： {this_user}")
     # 3. 发送消息
-    send_weather(access_token, this_user, weather)
+    send_weather(access_token, weather)
 
+
+def timetable(message):
+    # 1.获取access_token
+    access_token = get_access_token()
+    # 3. 发送消息
+    send_timetable(access_token, message)
 
 
 if __name__ == '__main__':
-    print(f"用户列表： {openId_list}")
-    print(f"地点列表： {Location_list}")
-    for _ in range(0,len(openId_list)):
-        weather_report(openId_list[_],Location_list[_])
+    weather_report("宁波")
+    # timetable("第二教学楼十分钟后开始英语课")
+
+    # schedule.every().day.at("18:30").do(weather_report, "南京")
+    # schedule.every().monday.at("13:50").do(timetable, "第二教学楼十分钟后开始英语课")
+    #while True:
+    #    schedule.run_pending()
+    #    time.sleep(1)
