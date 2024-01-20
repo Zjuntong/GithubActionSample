@@ -8,10 +8,10 @@ from bs4 import BeautifulSoup
 appID = os.environ.get("wxaf824accdbfdad5a")
 appSecret = os.environ.get("732ca5c31a4363b0d344013f7b7dd3e7")
 # 收信人ID即 用户列表中的微信号
-openId_str = os.environ.get("oKaJ26nC7rPHTReZSbXo4cv6OX9E", "oKaJ26scwbzDuBC_Cxqftmf-2KPY","")
+openId_str = os.environ.get("oKaJ26nC7rPHTReZSbXo4cv6OX9E", "oKaJ26scwbzDuBC_Cxqftmf-2KPY")
 openId_list = [id.strip() for id in openId_str.split('\n') if id.strip()]
 # 读入地址列表
-location_str = os.environ.get("义乌", "永康","")
+location_str = os.environ.get("义乌", "")
 Location_list = [loc.strip() for loc in location_str.split('\n') if loc.strip()]
 
 # 天气预报模板ID
