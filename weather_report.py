@@ -1,7 +1,6 @@
 import time
 import requests
 import json
-
 from bs4 import BeautifulSoup
 
 
@@ -11,9 +10,7 @@ appSecret = "732ca5c31a4363b0d344013f7b7dd3e7"
 #收信人ID即 用户列表中的微信号，见上文
 openId = "oKaJ26nC7rPHTReZSbXo4cv6OX9E"
 # 天气预报模板ID
-weather_template_id = "bzHc-S8oyAQvMl6MopOiEfsYgs2boMxSokMr7W_BpfE"
-# 时间表模板ID
-timetable_template_id = "MsUmEQRX1o8dENWw8YHtECy19i7ZaxNw8Sda0p3o6OQ"
+weather_template_id = "YVGM1_2rDCjOu9I3-O_D7n7hLLxUw1ghVoKHtWaholI"
 
 
 def get_weather(my_city):
@@ -155,10 +152,4 @@ def timetable(message):
 
 if __name__ == '__main__':
     weather_report("宁波")
-    # timetable("第二教学楼十分钟后开始英语课")
-
-    # schedule.every().day.at("18:30").do(weather_report, "南京")
-    # schedule.every().monday.at("13:50").do(timetable, "第二教学楼十分钟后开始英语课")
-    #while True:
-    #    schedule.run_pending()
-    #    time.sleep(1)
+    
