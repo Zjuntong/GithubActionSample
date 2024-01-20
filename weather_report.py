@@ -1,7 +1,7 @@
 import time
 import requests
 import json
-import schedule
+
 from bs4 import BeautifulSoup
 
 
