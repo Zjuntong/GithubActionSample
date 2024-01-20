@@ -151,5 +151,5 @@ def timetable(message):
 
 
 if __name__ == '__main__':
-    weather_report("宁波")
+    weather_report("义乌")
     
